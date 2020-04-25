@@ -62,18 +62,18 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 返回创建成功的token
         // 但是这里创建的token只是单纯的token
         // 按照jwt的规定，最后请求的时候应该是 `Bearer token`
-        String tokenStr = JwtTokenUtils.TOKEN_PREFIX + token;
+        final String tokenStr = JwtTokenUtils.TOKEN_PREFIX + token;
         response.setHeader("token",tokenStr);
         responseJson("登录成功",response);
     }
 
     @Override
     protected void unsuccessfulAuthentication(final HttpServletRequest request,final HttpServletResponse response,final AuthenticationException failed) throws IOException, ServletException{
-        response.getWriter().write("登录认证失败,账号或密码错误");
+        responseJson("登录认证失败,账号或密码错误",response);
     }
 
     public final static void responseJson(final String json,final HttpServletResponse response){
-        response.setContentType("text/html;charset=utf-8");
+        response.setContentType("text/html;charset=UTF-8");
         response.setHeader("Cache-Control","no-cache");
         PrintWriter writer = null;
         try {
