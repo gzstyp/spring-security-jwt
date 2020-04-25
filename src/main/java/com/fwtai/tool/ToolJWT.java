@@ -28,7 +28,7 @@ public final class ToolJWT implements Serializable{
 
     private final static String issuer = "贵州富翁泰科技有限责任公司";
 
-    private final static String salt = "V1JGR0dEZDJRZzAyYUhCVkhjVjZ1Umg5bHZvOG05VlVYd0FMUXlydEZOQUxhcitLWjM5ZitjNjR0WlgwSFBOQg==";
+    private final static String secret = "V1JGR0dEZDJRZzAyYUhCVkhjVjZ1Umg5bHZvOG05VlVYd0FMUXlydEZOQUxhcitLWjM5ZitjNjR0WlgwSFBOQg==";
 
     private final static String getWeakKey(){
         final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS384);
@@ -37,7 +37,7 @@ public final class ToolJWT implements Serializable{
 
     private final static String create(final String id,final String subject){
         final Date date = new Date();
-        final Key key = Keys.hmacShaKeyFor(salt.getBytes());
+        final Key key = Keys.hmacShaKeyFor(secret.getBytes());
         final JwtBuilder builder = Jwts.builder().signWith(key,SignatureAlgorithm.HS384);
         builder.setId(id).setIssuer(issuer).setIssuedAt(date).setExpiration(new Date(date.getTime() + expiry)).setSubject(subject);
         return builder.compact();
@@ -45,7 +45,7 @@ public final class ToolJWT implements Serializable{
 
     //解析
     private static Claims parser(final String token){
-        final Key key = Keys.hmacShaKeyFor(salt.getBytes());
+        final Key key = Keys.hmacShaKeyFor(secret.getBytes());
         final JwtParserBuilder builder = Jwts.parserBuilder();
         return builder.requireIssuer(issuer).setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
