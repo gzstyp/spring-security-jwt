@@ -1,9 +1,15 @@
 package com.fwtai.filter;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
+import javax.crypto.SecretKey;
+import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,28 +26,34 @@ public class TestJwtUtils {
 	public static final String APPSECRET_KEY = "congge_secret";
 
     private static final String ROLE_CLAIMS = "rol";
-	
-	/**
-	 * 生成token
-	 * @param username
-	 * @param role
-	 * @return
-	 */
-	public static String createToken(final String username,String role) {
 
-		final Map<String,Object> map = new HashMap<>();
-		map.put(ROLE_CLAIMS, role);
-		
-		String token = Jwts
-				.builder()
-				.setSubject(username)
-				.setClaims(map)
-				.claim("username",username)
-				.setIssuedAt(new Date())
-				.setExpiration(new Date(System.currentTimeMillis() + EXPIRITION))
-				.signWith(SignatureAlgorithm.HS256, APPSECRET_KEY).compact();
-		return token;
-	}
+    private final static long expiry = 1000 * 60 * 45;
+
+    private final static String issuer = "贵州富翁泰科技有限责任公司";
+
+    private final static String secret = "V1JGR0dEZDJRZzAyYUhCVkhjVjZ1Umg5bHZvOG05VlVYd0FMUXlydEZOQUxhcitLWjM5ZitjNjR0WlgwSFBOQg==";
+
+    private final static String getWeakKey(){
+        final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS384);
+        return Base64.getEncoder().encodeToString(secretKey.getEncoded());
+    }
+
+    public final static String createToken(final String username,final String role){
+        final Date date = new Date();
+        final Map<String,String> claims = new HashMap<>();
+        final Key key = Keys.hmacShaKeyFor(secret.getBytes());
+        claims.put(ROLE_CLAIMS,role);
+        final JwtBuilder builder = Jwts.builder().signWith(key,SignatureAlgorithm.HS384);
+        builder.claim("username",username).setClaims(claims).setIssuer(issuer).setIssuedAt(date).setExpiration(new Date(date.getTime() + expiry)).setSubject(username);
+        return builder.compact();
+    }
+
+    //解析
+    private static Claims parser(final String token){
+        final Key key = Keys.hmacShaKeyFor(secret.getBytes());
+        final JwtParserBuilder builder = Jwts.parserBuilder();
+        return builder.requireIssuer(issuer).setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
 
 	public static Claims checkJWT(String token) {
 		try {
@@ -58,8 +70,8 @@ public class TestJwtUtils {
 	 * @param token
 	 * @return
 	 */
-	public static String getUsername(String token){
-    	Claims claims = Jwts.parser().setSigningKey(APPSECRET_KEY).parseClaimsJws(token).getBody();
+	public static String getUsername(final String token){
+        final Claims claims = parser(token);
     	return claims.get("username").toString();
     }
 	
@@ -69,69 +81,7 @@ public class TestJwtUtils {
 	 * @return
 	 */
     public static String getUserRole(String token){
-    	final Claims claims = Jwts.parser().setSigningKey(APPSECRET_KEY).parseClaimsJws(token).getBody();
+    	final Claims claims = parser(token);
     	return claims.get("rol").toString();
     }
-    
-    /**
-     * 是否过期
-     * @param token
-     * @return
-     */
-    public static boolean isExpiration(String token){
-    	final Claims claims = Jwts.parser().setSigningKey(APPSECRET_KEY).parseClaimsJws(token).getBody();
-    	return claims.getExpiration().before(new Date());
-    }
-	
-	public static void main(String[] args) {
-		String name = "acong";
-		String role = "rol";
-		String token = createToken(name,role);
-		System.out.println(token);
-		
-		Claims claims = checkJWT(token);
-		System.out.println(claims.get("username"));
-		
-		System.out.println(getUsername(token));
-		System.out.println(getUserRole(token));
-		System.out.println(isExpiration(token));
-		
-	}
-	
-
-	/**
-	 * eyJhbGciOiJIUzI1NiJ9.
-	 * eyJzdWIiOiJjb25nZ2UiLCJpZCI6IjExMDExIiwibmFtZSI6Im51b3dlaXNpa2kiLCJpbWciOiJ3d3cudW9rby5jb20vMS5wbmciLCJpYXQiOjE1NTQ5OTI1NzksImV4cCI6MTU1NTU5NzM3OX0.
-	 * 6DJ9En-UBcTiMRldZeevJq3e1NxJgOWryUyim4_-tEE
-	 * 
-	 * @param args
-	 */
-
-	/*public static void main(String[] args) {
-
-		Users user = new Users();
-		user.setId("11011");
-		user.setUserName("nuoweisiki");
-		user.setFaceImage("www.uoko.com/1.png");
-		String token = generateJsonWebToken(user);
-
-		System.out.println(token);
-
-		Claims claims = checkJWT(token);
-		if (claims != null) {
-			String id = claims.get("id").toString();
-			String name = claims.get("name").toString();
-			String img = claims.get("img").toString();
-			
-			String rol = claims.get("rol").toString();
-
-			System.out.println("id:" + id);
-			System.out.println("name:" + name);
-			System.out.println("img:" + img);
-			
-			System.out.println("rol:" + rol);
-
-		}
-
-	}*/
 }

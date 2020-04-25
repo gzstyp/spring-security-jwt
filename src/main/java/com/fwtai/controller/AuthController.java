@@ -17,6 +17,7 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    // http://192.168.1.102:8091/auth/login
     // http://192.168.1.102:8091/index.html
     @PostMapping("/register")
     public String registerUser(final HttpServletRequest request){

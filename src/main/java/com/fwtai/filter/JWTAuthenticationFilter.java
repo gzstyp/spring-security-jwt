@@ -1,9 +1,6 @@
 package com.fwtai.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fwtai.entity.JwtUser;
-import com.fwtai.model.LoginUser;
-import com.fwtai.tool.JwtTokenUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,6 +34,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
+        // http://192.168.1.102:8091/auth/login
         super.setFilterProcessesUrl("/auth/login");//默认是 super(new AntPathRequestMatcher("/login", "POST"));
     }
 
@@ -62,7 +60,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 返回创建成功的token
         // 但是这里创建的token只是单纯的token
         // 按照jwt的规定，最后请求的时候应该是 `Bearer token`
-        final String tokenStr = JwtTokenUtils.TOKEN_PREFIX + token;
+        final String tokenStr = TestJwtUtils.TOKEN_PREFIX + token;
         response.setHeader("token",tokenStr);
         responseJson("登录成功",response);
     }

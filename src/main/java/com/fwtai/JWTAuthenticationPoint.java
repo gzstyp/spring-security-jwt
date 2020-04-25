@@ -11,7 +11,8 @@ import java.io.IOException;
 
 public class JWTAuthenticationPoint implements AuthenticationEntryPoint{
 
-    public void commence(final HttpServletRequest request,HttpServletResponse response,AuthenticationException authException) throws IOException, ServletException{
+    public void commence(final HttpServletRequest request,final HttpServletResponse response,final AuthenticationException authException) throws IOException, ServletException{
+        response.setContentType("text/html;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         String reason = "统一处理，原因：" + authException.getMessage();
         response.getWriter().write(new ObjectMapper().writeValueAsString(reason));
