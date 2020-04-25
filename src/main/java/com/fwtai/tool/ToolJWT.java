@@ -14,6 +14,7 @@ import java.util.Base64;
 import java.util.Date;
 
 /**
+ * json web token
  * @作者 田应平
  * @版本 v1.0
  * @创建时间 2020-04-25 14:42
