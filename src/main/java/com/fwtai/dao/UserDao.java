@@ -9,4 +9,5 @@ public interface UserDao{
 	void save(final User user);
 
 	User findByUsername(String name);
+	
 }

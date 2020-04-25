@@ -30,41 +30,25 @@ public class JwtTokenUtils{
     // 创建token
     public static String createToken(String username,String role) {
     	
-        //long expiration = isRememberMe ? EXPIRATION_REMEMBER : EXPIRATION;
-    	
     	long expiration = EXPIRATION_REMEMBER ;
         
         Map<String, Object> map = new HashMap<String, Object>();
         map.put(ROLE_CLAIMS, role);
         
         return 
-        		Jwts.builder()
-                .signWith(SignatureAlgorithm.HS512, SECRET)
-                .setClaims(map)
-                .setIssuer(ISS)
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
-                .compact();
-        		
-        		/*Jwts
-        		.builder()
-        		.setSubject(SUBJECT)
-        		.claim("name", username)
-                .setClaims(map)
-                //.setIssuer(ISS)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
-                //.signWith(SignatureAlgorithm.HS256, SECRET)
-                .signWith(SignatureAlgorithm.HS256, SECRET)
-                .compact();*/
-        
+            Jwts.builder()
+            .signWith(SignatureAlgorithm.HS512, SECRET)
+            .setClaims(map)
+            .setIssuer(ISS)
+            .setSubject(username)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
+            .compact();
     }
 
     // 从token中获取用户名
     public static String getUsername(String token){
         //return getTokenBody(token).getSubject();
-    	
     	Claims claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
     	return claims.get("name").toString();
     	
@@ -82,8 +66,8 @@ public class JwtTokenUtils{
 
     private static Claims getTokenBody(String token){
         return Jwts.parser()
-                .setSigningKey(SECRET)
-                .parseClaimsJws(token)
-                .getBody();
+        .setSigningKey(SECRET)
+        .parseClaimsJws(token)
+        .getBody();
     }
 }

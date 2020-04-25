@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collection;
 
 /**
@@ -40,22 +41,15 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request,HttpServletResponse response) throws AuthenticationException{
-        // 从输入流中获取到登录的信息
-        try {
-            final LoginUser loginUser = new ObjectMapper().readValue(request.getInputStream(), LoginUser.class);
-            return authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword())
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Authentication attemptAuthentication(final HttpServletRequest request,HttpServletResponse response) throws AuthenticationException{
+        final String userName = request.getParameter("userName");
+        final String password = request.getParameter("password");
+        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName,password));
     }
 
     // 成功验证后调用的方法,如果验证成功，就生成token并返回
     @Override
-    protected void successfulAuthentication(HttpServletRequest request,HttpServletResponse response,FilterChain chain,Authentication authResult) throws IOException, ServletException{
+    protected void successfulAuthentication(final HttpServletRequest request,HttpServletResponse response,FilterChain chain,Authentication authResult) throws IOException, ServletException{
         final JwtUser jwtUser = (JwtUser) authResult.getPrincipal();
         System.out.println("jwtUser:" + jwtUser.toString());
         String role = "";
@@ -63,17 +57,36 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         for (GrantedAuthority authority : authorities){
             role = authority.getAuthority();
         }
-        String token = TestJwtUtils.createToken(jwtUser.getUsername(), role);
+        final String token = TestJwtUtils.createToken(jwtUser.getUsername(), role);
         //String token = JwtTokenUtils.createToken(jwtUser.getUsername(), false);
         // 返回创建成功的token
         // 但是这里创建的token只是单纯的token
         // 按照jwt的规定，最后请求的时候应该是 `Bearer token`
         String tokenStr = JwtTokenUtils.TOKEN_PREFIX + token;
         response.setHeader("token",tokenStr);
+        responseJson("登录成功",response);
     }
 
     @Override
     protected void unsuccessfulAuthentication(final HttpServletRequest request,final HttpServletResponse response,final AuthenticationException failed) throws IOException, ServletException{
-        response.getWriter().write("认证失败,账号或密码错误: " + failed.getMessage());
+        response.getWriter().write("登录认证失败,账号或密码错误");
+    }
+
+    public final static void responseJson(final String json,final HttpServletResponse response){
+        response.setContentType("text/html;charset=utf-8");
+        response.setHeader("Cache-Control","no-cache");
+        PrintWriter writer = null;
+        try {
+            writer = response.getWriter();
+            writer.write(json);
+            writer.flush();
+            writer.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally{
+            if(writer != null){
+                writer.close();
+            }
+        }
     }
 }

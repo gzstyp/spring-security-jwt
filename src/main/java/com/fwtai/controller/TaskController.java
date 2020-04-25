@@ -4,6 +4,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TaskController {
 
     @GetMapping("/getTasks")
+    @ResponseBody
     public String listTasks(){
         return "任务列表";
     }
