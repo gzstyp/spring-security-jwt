@@ -30,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     @Qualifier("userDetailsServiceImpl")
     private UserDetailsService userDetailsService;
 
+    //登录认证(多种认证方式中的一种)
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(new Passworder());
