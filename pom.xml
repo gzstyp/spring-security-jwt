@@ -21,8 +21,8 @@
         3、用户的实体类，dao层，service层（真正开发时再写，这里就直接调用dao层操作数据库）
         4、实现UserDetailsService接口
         5、实现UserDetails接口
-        6、验证用户登录信息的拦截器
-        7、验证用户权限的拦截器
+        6、验证用户登录信息的拦截器 JWTAuthenticationFilter
+        7、验证用户权限的拦截器 JWTAuthorizationFilter
         8、springSecurity配置
         9、认证的Controller以及测试的controller
 

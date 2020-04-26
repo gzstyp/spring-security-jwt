@@ -32,7 +32,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     
     private AuthenticationManager authenticationManager;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthenticationFilter(final AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
         // http://192.168.1.102:8091/auth/login
         super.setFilterProcessesUrl("/auth/login");//默认是 super(new AntPathRequestMatcher("/login", "POST"));
