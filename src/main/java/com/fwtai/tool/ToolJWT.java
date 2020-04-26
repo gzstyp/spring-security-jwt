@@ -35,6 +35,7 @@ public final class ToolJWT implements Serializable{
         return Base64.getEncoder().encodeToString(secretKey.getEncoded());
     }
 
+    // setSubject 不能和s etClaims() 同时使用,如果用不到 userId() 的话可以把setId的值设为 userName !!!
     private final static String create(final String id,final String subject){
         final Date date = new Date();
         final Key key = Keys.hmacShaKeyFor(secret.getBytes());
