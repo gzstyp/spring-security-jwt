@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
             .and()
             .addFilter(new JWTAuthenticationFilter(authenticationManager()))//登录拦截器
             .addFilter(new JWTAuthorizationFilter(authenticationManager()))//鉴权过滤器
-            // 不需要session
+            // 不需要session(create no session)禁用
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
