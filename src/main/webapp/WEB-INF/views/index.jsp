@@ -14,7 +14,9 @@
     <meta http-equiv="expires" content="0">
 </head>
 <body>
-    您好！${authentication}< br />
+    您好！${principal}< br />
+    您好！${principal.JwtUser}< br />
+    您好！${principal.JwtUser.username}< br />
     <br> 权限测试页面
     <sec:authorize access="hasAuthority('edit')">
         拥有edit权限

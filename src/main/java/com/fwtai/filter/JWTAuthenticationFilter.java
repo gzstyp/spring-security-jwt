@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -43,16 +44,21 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(final HttpServletRequest request,HttpServletResponse response) throws AuthenticationException{
         final String userName = request.getParameter("userName");
         final String password = request.getParameter("password");
+        if(userName == null){
+            throw new UsernameNotFoundException("请输入登录账号");
+        }if(password == null){
+            throw new UsernameNotFoundException("请输入登录密码");
+        }
         return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName,password));
     }
 
     // 成功验证后调用的方法,如果验证成功，就生成token并返回
     @Override
-    protected void successfulAuthentication(final HttpServletRequest request,HttpServletResponse response,FilterChain chain,Authentication authResult) throws IOException, ServletException{
+    protected void successfulAuthentication(final HttpServletRequest request,final HttpServletResponse response,final FilterChain chain,final Authentication authResult) throws IOException, ServletException{
         final JwtUser jwtUser = (JwtUser) authResult.getPrincipal();
         System.out.println("jwtUser:" + jwtUser.toString());
         String role = "";
-        Collection<? extends GrantedAuthority> authorities = jwtUser.getAuthorities();
+        final Collection<? extends GrantedAuthority> authorities = jwtUser.getAuthorities();
         for (final GrantedAuthority authority : authorities){
             role = authority.getAuthority();
         }
@@ -66,7 +72,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void unsuccessfulAuthentication(final HttpServletRequest request,final HttpServletResponse response,final AuthenticationException failed) throws IOException, ServletException{
-        responseJson("登录认证失败,账号或密码错误",response);
+        if(failed instanceof UsernameNotFoundException){
+            responseJson(failed.getMessage(),response);
+        }else{
+            responseJson("登录认证失败,账号或密码错误",response);
+        }
     }
 
     public final static void responseJson(final String json,final HttpServletResponse response){
