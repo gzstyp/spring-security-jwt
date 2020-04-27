@@ -18,9 +18,7 @@ public class TaskController {
     }
 
     @GetMapping("/newTasks")
-    //@PreAuthorize("hasAuthority('OP_DELETE_ACCOUNT')")
-    //@PreAuthorize("hasRole('ADMIN')")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")//角色必须以大写的ROLE_开头
+    @PreAuthorize("hasRole('ROLE_ADMIN')")//角色必须以大写的ROLE_开头(即数据库存的必须是以ROLE_开头)
     public String newTasks(){
         return "创建了一个新的任务";
     }

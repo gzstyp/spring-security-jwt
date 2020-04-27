@@ -28,7 +28,7 @@
         注意:
         一般情况下,角色是以ROLE_开头且是大写的,而权限可以是不区分大小写的,
         即@PreAuthorize("hasRole('ROLE_XXX')"),@PreAuthorize("hasAuthority('edit')")
-        角色必须以大写的ROLE_开头,权限不区分大小写也以一定是以的ROLE_开头
+        角色必须以大写的ROLE_开头,权限不区分大小写也以一定是以的ROLE_开头(即数据库存的必须是以ROLE_开头)
         在一般的项目中, 我认为没有必要区分 role 和 Granted Authority, 可以将它们认为等同起来, 统一认为它们都是权限, 以减少概念的混淆
 
     </description>
