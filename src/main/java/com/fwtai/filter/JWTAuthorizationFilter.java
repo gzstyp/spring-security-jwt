@@ -57,9 +57,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter{
             for(final String value : roles){
                 authorities.add(new SimpleGrantedAuthority(value));
             }
-            List<SimpleGrantedAuthority> list = Collections.singletonList(new SimpleGrantedAuthority(role));
-            //return new UsernamePasswordAuthenticationToken(username,null,Collections.singleton(new SimpleGrantedAuthority(role)));//单个角色
-            return new UsernamePasswordAuthenticationToken(username,null,authorities);//多个角色
+            authorities.add(new SimpleGrantedAuthority("edit"));//一般情况下,角色是以ROLE_开头且是大写的,而权限可以是不区分大小写的,即@PreAuthorize("hasRole('ROLE_ADMIN')"),@PreAuthorize("hasAuthority('edit')")
+            //return new UsernamePasswordAuthenticationToken(username,null,Collections.singleton(new SimpleGrantedAuthority(role)));//单个角色或权限
+            return new UsernamePasswordAuthenticationToken(username,null,authorities);//多个角色或权限
         }
         return null;
     }

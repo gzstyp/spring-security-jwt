@@ -18,8 +18,16 @@ public class TaskController {
     }
 
     @GetMapping("/newTasks")
+    //@PreAuthorize("hasAuthority('OP_DELETE_ACCOUNT')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @PreAuthorize("hasRole('ROLE_ADMIN')")//角色必须以大写的ROLE_开头
     public String newTasks(){
         return "创建了一个新的任务";
+    }
+
+    @GetMapping("/edit")
+    @PreAuthorize("hasAuthority('edit')")//权限不区分大小写也以一定是以的ROLE_开头
+    public String edit(){
+        return "有edit权限";
     }
 }
