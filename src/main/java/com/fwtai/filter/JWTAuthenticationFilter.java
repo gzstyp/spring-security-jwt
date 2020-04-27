@@ -34,7 +34,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     
     private AuthenticationManager authenticationManager;
 
-    public JWTAuthenticationFilter(final AuthenticationManager authenticationManager) {
+    public JWTAuthenticationFilter(final AuthenticationManager authenticationManager){
         this.authenticationManager = authenticationManager;
         // http://192.168.1.102:8091/auth/login
         super.setFilterProcessesUrl("/auth/login");//默认是 super(new AntPathRequestMatcher("/login", "POST"));
@@ -44,9 +44,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(final HttpServletRequest request,HttpServletResponse response) throws AuthenticationException{
         final String userName = request.getParameter("userName");
         final String password = request.getParameter("password");
-        if(userName == null){
+        if(userName == null || userName.length() <= 0){
             throw new UsernameNotFoundException("请输入登录账号");
-        }if(password == null){
+        }if(password == null || password.length() <= 0){
             throw new UsernameNotFoundException("请输入登录密码");
         }
         return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName,password));
@@ -79,7 +79,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
     }
 
-    public final static void responseJson(final String json,final HttpServletResponse response){
+    private void responseJson(final String json,final HttpServletResponse response){
         response.setContentType("text/html;charset=UTF-8");
         response.setHeader("Cache-Control","no-cache");
         PrintWriter writer = null;
