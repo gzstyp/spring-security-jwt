@@ -6,9 +6,11 @@ import com.fwtai.filter.JWTAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -31,8 +33,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     //登录认证(多种认证方式中的一种)
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(new Passworder());
+    }
+
+    @Override
+    public void configure(final WebSecurity web) {
+        web.ignoring()
+          .antMatchers(HttpMethod.OPTIONS, "/**")
+          // allow anonymous resource requests(允许匿名资源请求)
+          .antMatchers(
+            "/",
+            "/*.html",
+            "/favicon.ico",
+            "/**/*.html",
+            "*.html",
+            "/**/*.css",
+            "/**/*.js"
+          );
     }
 
     @Override
