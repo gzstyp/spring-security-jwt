@@ -12,7 +12,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * 验证成功当然就是进行鉴权过滤器了,即登录成功之后走此类进行鉴权操作
@@ -50,7 +52,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter{
         final String username = ToolJWT.extractUsername(token);
         final String role = ToolJWT.extractRole(token);
         if(username != null){
-            return new UsernamePasswordAuthenticationToken(username,null,Collections.singleton(new SimpleGrantedAuthority(role)));
+            final String[] roles = role.split(",");
+            final List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            for(final String value : roles){
+                authorities.add(new SimpleGrantedAuthority(value));
+            }
+            List<SimpleGrantedAuthority> list = Collections.singletonList(new SimpleGrantedAuthority(role));
+            //return new UsernamePasswordAuthenticationToken(username,null,Collections.singleton(new SimpleGrantedAuthority(role)));//单个角色
+            return new UsernamePasswordAuthenticationToken(username,null,authorities);//多个角色
         }
         return null;
     }
