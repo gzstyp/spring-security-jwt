@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/auth")
-public class AuthController {
+@RequestMapping("/user")
+public class UserController{
 
     @Autowired
     private UserService userService;
 
-    // http://192.168.1.102:8091/auth/login
+    // http://192.168.1.102:8091/user/login
     // http://192.168.1.102:8091/index.html
     @PostMapping("/register")
     public String registerUser(final HttpServletRequest request){
