@@ -1,5 +1,6 @@
 package com.fwtai.filter;
 
+import com.fwtai.tool.ToolJWT;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -32,22 +33,22 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter{
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response,FilterChain chain) throws IOException, ServletException{
-        final String tokenHeader = request.getHeader(TestJwtUtils.TOKEN_HEADER);
+        final String tokenHeader = request.getHeader(ToolJWT.TOKEN_HEADER);
         // 如果请求头中没有Authorization信息则直接放行了
-        if(tokenHeader == null || !tokenHeader.startsWith(TestJwtUtils.TOKEN_PREFIX)){
+        if(tokenHeader == null || !tokenHeader.startsWith(ToolJWT.TOKEN_PREFIX)){
             chain.doFilter(request,response);
-            return;
+        }else{
+            // 如果请求头中有token，则进行解析，并且设置认证信息
+            SecurityContextHolder.getContext().setAuthentication(getAuthentication(tokenHeader));
+            super.doFilterInternal(request,response,chain);
         }
-        // 如果请求头中有token，则进行解析，并且设置认证信息
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication(tokenHeader));
-        super.doFilterInternal(request,response,chain);
     }
 
     // 这里从token中获取用户信息并新建一个token
     private UsernamePasswordAuthenticationToken getAuthentication(String tokenHeader){
-        final String token = tokenHeader.replace(TestJwtUtils.TOKEN_PREFIX,"");
-        final String username = TestJwtUtils.getUsername(token);
-        final String role = TestJwtUtils.getUserRole(token);
+        final String token = tokenHeader.replace(ToolJWT.TOKEN_PREFIX,"");
+        final String username = ToolJWT.extractUsername(token);
+        final String role = ToolJWT.extractRole(token);
         if(username != null){
             return new UsernamePasswordAuthenticationToken(username,null,Collections.singleton(new SimpleGrantedAuthority(role)));
         }

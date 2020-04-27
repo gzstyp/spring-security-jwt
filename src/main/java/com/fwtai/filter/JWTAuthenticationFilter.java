@@ -1,6 +1,7 @@
 package com.fwtai.filter;
 
 import com.fwtai.entity.JwtUser;
+import com.fwtai.tool.ToolJWT;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -52,16 +53,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         System.out.println("jwtUser:" + jwtUser.toString());
         String role = "";
         Collection<? extends GrantedAuthority> authorities = jwtUser.getAuthorities();
-        for (GrantedAuthority authority : authorities){
+        for (final GrantedAuthority authority : authorities){
             role = authority.getAuthority();
         }
-        final String token = TestJwtUtils.createToken(jwtUser.getUsername(), role);
-        //String token = JwtTokenUtils.createToken(jwtUser.getUsername(), false);
-        // 返回创建成功的token
-        // 但是这里创建的token只是单纯的token
+        final String token = ToolJWT.createToken(jwtUser.getUsername(), role);
+        // 返回创建成功的token,但是这里创建的token只是单纯的token
         // 按照jwt的规定，最后请求的时候应该是 `Bearer token`
-        final String tokenStr = TestJwtUtils.TOKEN_PREFIX + token;
-        response.setHeader("token",tokenStr);
+        final String tokenStr = ToolJWT.TOKEN_PREFIX + token;
+        response.setHeader("Authorization",tokenStr);
         responseJson("登录成功",response);
     }
 

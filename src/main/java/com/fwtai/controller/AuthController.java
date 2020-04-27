@@ -26,7 +26,7 @@ public class AuthController {
         final User user = new User();
         user.setUsername(userName);
         user.setPassword(ToolSHA.encoder(password));
-        user.setRole("ROLE_USER");
+        user.setRole("ROLE_USER");//角色必须以大写的ROLE_开头
         userService.save(user);
         return "注册成功";
     }

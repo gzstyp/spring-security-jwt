@@ -17,8 +17,8 @@ public class TaskController {
         return "任务列表";
     }
 
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/newTasks")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")//角色必须以大写的ROLE_开头
     public String newTasks(){
         return "创建了一个新的任务";
     }

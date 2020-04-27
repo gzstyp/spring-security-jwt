@@ -24,6 +24,10 @@ import java.util.Date;
  */
 public final class ToolJWT implements Serializable{
 
+    public static final String TOKEN_HEADER = "Authorization";
+
+    public static final String TOKEN_PREFIX = "Bearer ";
+
     private final static long expiry = 1000 * 60 * 45;
 
     private final static String issuer = "贵州富翁泰科技有限责任公司";
@@ -35,17 +39,24 @@ public final class ToolJWT implements Serializable{
         return Base64.getEncoder().encodeToString(secretKey.getEncoded());
     }
 
-    // setSubject 不能和s etClaims() 同时使用,如果用不到 userId() 的话可以把setId的值设为 userName !!!
-    private final static String create(final String id,final String subject){
+    //创建
+    public final static String createToken(final String userName,final String roles){
         final Date date = new Date();
         final Key key = Keys.hmacShaKeyFor(secret.getBytes());
         final JwtBuilder builder = Jwts.builder().signWith(key,SignatureAlgorithm.HS384);
-        builder.setId(id).setIssuer(issuer).setIssuedAt(date).setExpiration(new Date(date.getTime() + expiry)).setSubject(subject);
-        return builder.compact();
+        return builder.setSubject(userName).claim("roles",roles).setIssuer(issuer).setIssuedAt(date).setExpiration(new Date(date.getTime() + expiry)).compact();
+    }
+
+    public final static String extractRole(final String token){
+        return parserToken(token).get("roles",String.class);
+    }
+
+    public final static String extractUsername(final String token){
+        return parserToken(token).getSubject();
     }
 
     //解析
-    private static Claims parser(final String token){
+    private final static Claims parserToken(final String token){
         final Key key = Keys.hmacShaKeyFor(secret.getBytes());
         final JwtParserBuilder builder = Jwts.parserBuilder();
         return builder.requireIssuer(issuer).setSigningKey(key).build().parseClaimsJws(token).getBody();
