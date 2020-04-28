@@ -45,8 +45,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter{
         }
     }
 
-    // 这里从token中获取用户信息并新建一个token
-    private UsernamePasswordAuthenticationToken getAuthentication(String tokenHeader){
+    // 这里从token中获取用户信息并新建一个token,需将 List<Authority> 转成 List<SimpleGrantedAuthority>，否则前端拿不到角色列表名称
+    private UsernamePasswordAuthenticationToken getAuthentication(final String tokenHeader){
         final String token = tokenHeader.replace(ToolJWT.TOKEN_PREFIX,"");
         final String username = ToolJWT.extractUsername(token);
         final String role = ToolJWT.extractRole(token);

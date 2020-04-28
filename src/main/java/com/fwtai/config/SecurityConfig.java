@@ -55,7 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
+        //.cors().and()
+        http.csrf().disable()//.ignoringAntMatchers("/h2-console/**"); // 禁用 H2 控制台的 CSRF 防护
             .authorizeRequests()
             .anyRequest().permitAll()
             .and()
