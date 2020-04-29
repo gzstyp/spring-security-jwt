@@ -1,6 +1,6 @@
 package com.fwtai.config;
 
-import com.fwtai.JWTAuthenticationPoint;
+import com.fwtai.AuthExceptionPoint;
 import com.fwtai.filter.JWTAuthenticationFilter;
 import com.fwtai.filter.JWTAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .exceptionHandling()
-            .authenticationEntryPoint(new JWTAuthenticationPoint());
+            .authenticationEntryPoint(new AuthExceptionPoint());
     }
 
     @Bean
